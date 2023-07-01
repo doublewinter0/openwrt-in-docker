@@ -1,0 +1,36 @@
+# version: "3.8"
+
+services:
+  openwrt:
+    container_name: openwrt
+    command: [ "/sbin/init" ]
+    hostname: OPENWRT
+    image: piaoyizy/openwrt-x86
+    networks:
+      - wan
+      - lan
+    privileged: true
+    restart: always
+
+networks:
+  wan:
+    driver: macvlan
+    driver_opts:
+      parent: openwrt-wan
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/24
+          gateway: 192.168.0.1
+    name: wan
+
+  lan:
+    driver: macvlan
+    driver_opts:
+      parent: openwrt-lan
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.1.0/24
+          gateway: 192.168.1.1
+    name: lan

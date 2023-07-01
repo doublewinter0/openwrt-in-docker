@@ -1,0 +1,10 @@
+[Unit]
+Description=OpenWRT Host Networking
+After=systemd-networkd.service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /usr/local/bin/openwrt-lan.sh
+
+[Install]
+WantedBy=multi-user.target
