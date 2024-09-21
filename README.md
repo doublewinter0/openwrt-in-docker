@@ -4,7 +4,8 @@
 
 ## 准备工作
 
-- 一台长期开机的 **Linux** 机器（该设备最好能有两个千兆以上的物理网口，可以用 *USB* 网卡代替），*ARM/x86* 均可，并且已安装 **Docker**。
+- 一台长期开机的 **Linux** 机器（该设备最好能有两个千兆以上的物理网口，可以用 *USB* 网卡代替），*ARM/x86* 均可，并且已安装 *
+  *Docker**。
 
 ## 配置
 
@@ -16,9 +17,8 @@
   `openwrt-lan` 的 *IP* 为 `192.168.1.1`，*CIDR* 为 `192.168.1.0/24`。
   只要两边的 *IP* 不在同一个网段即可。
 
-> 注：如果需要修改网口名称，同步修改 [openwrt-lan.sh](bin/openwrt-lan.sh)，
-  [openwrt-lan.service](conf/openwrt-lan.service)，[docker-compose.yml](docker-compose.yml) 中相应的配置。
-  文档使用的是 `x86` 架构的设备，如果你使用的是 `ARM`架构的设备，可能需要修改 [docker-compose.yml](docker-compose.yml) 中的镜像。
+> 注：如果需要修改网口名称，同步修改 [openwrt-lan.sh](bin/openwrt-lan.sh)，[openwrt-lan.service](conf/openwrt-lan.service)，[docker-compose.yml](docker-compose.yml) 中相应的配置。
+> 文档使用的是 `x86` 架构的设备，如果你使用的是 `ARM`架构的设备，可能需要修改 [docker-compose.yml](docker-compose.yml) 中的镜像。
 
 ## 启动
 
@@ -73,7 +73,7 @@ config interface 'lan'
 
 #### 3.4 调整光猫，路由器配置
 
-将光猫设置为`桥接`模式，将路由器设置 `AP` 模式
+将光猫设置为 `桥接` 模式，将路由器设置 `AP` 模式
 
 #### 3.5 进入 Web 控制面板
 
@@ -84,13 +84,20 @@ config interface 'lan'
 
 ## 宿主机网络修复
 
-**OpenWrt** 容器运行后，宿主机无法正常访问 *Internet*，局域网内其他设备也无法访问宿主机；
-应该和 **Docker** 的 `macvlan` 网络驱动有关，比较复杂，我目前还没有搞懂。
-幸运的是，网上有大佬给出了一些解决方案，我整理成了一个简单的 [脚本](bin/openwrt-lan.sh)，并作为 [systemd](https://systemd.io) 服务运行。
-在启动该守护进程前，请根据实际情况修改 [openwrt-lan.sh](bin/openwrt-lan.sh) 和 [openwrt-lan.service](conf/openwrt-lan.service)。
+**OpenWrt** 容器运行后，*宿主机* 与 **OpenWRT** 之间无法通信，导致 *宿主机* 无法访问互联网；局域网内 *其他设备* 也无法与 *宿主机* 通信。
+这和 **Docker** 的 `macvlan` 网络驱动模式有关，这个模式通俗一点讲就是在一张物理网卡上虚拟出两个虚拟网卡，具有不同的 *MAC* 地址，
+可以让 *宿主机* 和 **Docker** 同时接入网络并且使用不同的 *IP*，此时 **Docker** 可以直接和同一网络下的 *其他设备* 直接通信，很方便。
+不过，这种模式有一个问题：*宿主机* 和 *容器* 是没办法直接进行网络通信的，也即最开始提到的问题。
 
-> 注意，如果该守护进程成功运行，宿主机应该可以正常访问网络了，但是局域网内其他设备仍然无法直接连接宿主机，需要借助 **OpenWRT** 作为跳板机来连接宿主机。
-  也即，假如你想在局域网内连接宿主机，需要先 *ssh* 到 **OpenWRT**，然后在 **OpenWRT** 内再 *ssh* 到宿主机。
+幸运的是，网上有大佬给出了一些解决方案，我整理成了一个简单的[脚本](bin/openwrt-lan.sh)，并作为[systemd](https://systemd.io)服务运行。
+在启动该守护进程前，请根据实际情况修改[openwrt-lan.sh](bin/openwrt-lan.sh)
+和[openwrt-lan.service](conf/openwrt-lan.service)。
+
+> 注意，如果该守护进程成功运行，宿主机应该可以正常访问网络了，但是局域网内其他设备仍然无法直接连接宿主机，需要借助 **OpenWRT
+** 作为跳板机来连接宿主机。
+> 也即，假如你想在局域网内连接宿主机，需要先 *ssh* 到 **OpenWRT**，然后在 **OpenWRT** 内再 *ssh* 到宿主机。
 
 ## 感谢
+
 - [在Docker 中运行 OpenWrt 旁路网关](https://mlapp.cn/376.html)
+- [macvlan模式容器与宿主机通信](https://aoyouer.com/posts/macvlan-host/)
