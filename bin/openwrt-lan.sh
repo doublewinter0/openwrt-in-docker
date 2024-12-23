@@ -14,7 +14,7 @@ func() {
   # 局域网其他设备，需要添加路由，否则无法访问
   # ip route add 192.168.1.1 dev lan
 
-  sleep 180
+  sleep 120
 
   ip route delete default via 192.168.1.1 dev openwrt-wan
 
