@@ -5,15 +5,16 @@
 ## 准备工作
 
 - 将光猫设置为 **桥接** 模式，具体可咨询当地运营商，路由器设置为 [*PPPoE*](https://en.wikipedia.org/wiki/Point-to-Point_Protocol_over_Ethernet) 模式（后面会改为 **AP** 模式）。
-- 一台运行 **Linux**（推荐 [Arch](https://archlinux.org)）操作系统的设备，*ARM/x86* 均可，已安装 **Docker**；最好能有两个千兆以上的物理网口（可以用 *USB* 网卡代替），假设名称分别为 ***openwrt-wan*** 和 ***openwrt-lan***，在当前网络中的*IP* 分别为 `192.168.1.10`，`192.168.1.20`。
+- 一台运行 **Linux**（推荐 [Arch](https://archlinux.org)）操作系统的设备，*ARM/x86* 均可，已安装 **Docker**；最好能有两个千兆以上的物理网口（可以用 *USB* 网卡代替），假设名称分别为 ***openwrt-wan*** 和 ***openwrt-lan***，在当前网络中的 *IP* 分别为 `192.168.1.10`，`192.168.1.20`。
 - 在后续的步骤中，我们会将 ***openwrt-wan*** 连接光猫，作为 ***wan*** 口使用，提供 [*PPPoE*](https://en.wikipedia.org/wiki/Point-to-Point_Protocol_over_Ethernet) 拨号等服务；***openwrt-lan*** 连接路由器，作为 ***lan*** 口使用，提供 [*DHCP*](https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol) 等服务。
-- 我们假设光猫的 *IP* 为 `192.168.0.1`，*CIDR* 为 `192.168.0.0/24`，***openwrt-lan*** 的 *IP* 为 `192.168.1.1`，*CIDR* 为 `192.168.1.0/24`，只要两边的 *IP* 不在同一个网段即可。
+- 我们假设光猫的 *IP* 为 `192.168.0.1`，*CIDR* 为 `192.168.0.0/24`，***openwrt-lan*** 作为 ***lan*** 口的 *IP* 为 `192.168.1.1`，*CIDR* 为 `192.168.1.0/24`，只要两边的 *IP* 不在同一个网段即可。
 
-以下请根据实际情况配置或修改：
-> 需要使用 [*systemd-networkd*](https://wiki.archlinux.org/title/Systemd-networkd) 作为 **Linux** 系统的网络配置工具。  
-> 如果要修改网口名称，需同步修改 [*openwrt-lan.sh*](bin/openwrt-lan.sh)，[*openwrt-lan.service*](conf/openwrt-lan.service)，[*docker-compose.yml*](docker-compose.yml) 中相应的配置项。  
-> 如果要修改 *IP*，需同步修改 [*openwrt-lan.sh*](bin/openwrt-lan.sh)，[*docker-compose.yml*](docker-compose.yml) 中相应的配置项。  
-> 文档使用的是 *x86* 架构的设备，如果你使用的是 *ARM* 架构的设备，可能需要修改 [*docker-compose.yml*](docker-compose.yml) 中的镜像。
+以下配置根据实际情况修改：
+- 如果要修改网口名称，需同步修改 [*openwrt-lan.sh*](bin/openwrt-lan.sh)，[*openwrt-lan.service*](conf/openwrt-lan.service)，[*docker-compose.yml*](docker-compose.yml) 中相应的配置项。  
+- 如果要修改 *IP*，需同步修改 [*openwrt-lan.sh*](bin/openwrt-lan.sh)，[*docker-compose.yml*](docker-compose.yml) 中相应的配置项。  
+- 文档使用的是 *x86* 架构的设备，如果你使用的是 *ARM* 架构的设备，可能需要修改 [*docker-compose.yml*](docker-compose.yml) 中的镜像。
+
+> 注：需要使用 [*systemd-networkd*](https://wiki.archlinux.org/title/Systemd-networkd) 作为 **Linux** 的网络配置工具。  
 
 ## 启动&配置
 
@@ -50,7 +51,7 @@ config interface 'lan'
         option ip6assign '60'
         option dns '114.114.114.114 223.5.5.5 119.29.29.29 8.8.8.8 1.1.1.1'
 ```
-只需要修改 `option ipaddr` 字段，将其修改为 ***openwrt-lan*** 的 *IP* 即可，本教程中为 `192.168.1.1`。
+只需要修改 *option ipaddr* 字段，将其修改为 ***lan*** 口的 *IP* 即可，本教程中为 `192.168.1.1`。
 
 #### 3.3 重启网络
 ```shell
@@ -60,8 +61,8 @@ config interface 'lan'
 #### 3.4 调整路由器配置
 将路由器设置为 **AP** 模式
 
-#### 3.5 进入 Web 控制面板
-在浏览器中输入 ***openwrt-lan*** 的 *IP* 进入 *Luci* 控制面板，用户名：`root`，密码：`password`；在 *Web* 控制面板，你可以对 **OpenWRT** 进行各种配置，包括系统、网络、服务等。
+#### 3.5 网络调整
+在浏览器中输入 ***lan*** 口的 *IP* 进入 *Luci* 控制面板，用户名：`root`，密码：`password`；在 *Web* 控制面板，你可以对 **OpenWRT** 进行各种配置，包括系统、网络、服务等。
 
 > 建议 ***wan***、***lan*** 口都使用自定义的 *DNS*。
 
