@@ -61,10 +61,21 @@ config interface 'lan'
 #### 3.4 调整路由器配置
 将路由器设置为 **AP** 模式
 
-#### 3.5 网络调整
-在浏览器中输入 ***lan*** 口的 *IP* 进入 *Luci* 控制面板，用户名：`root`，密码：`password`；在 *Web* 控制面板，你可以对 **OpenWRT** 进行各种配置，包括系统、网络、服务等。
+#### 3.5 WAN/LAN 口配置调整
+在浏览器中输入 ***lan*** 口的 *IP* 进入 *Luci* 控制面板，用户名：`root`，密码：`password`。  
+在 *Web* 控制面板，将 ***wan*** 口协议设置为 *PPPoE*，并使用自定义的 *DNS*，如下图所示：
+![wan_pppoe](img/wan_pppoe.png)
+![wan_dns](img/wan_dns.png)
+
+将 ***lan*** 口协议设置为 *静态地址*，并使用自定义的 *DNS*，然后调整 *DHCP* 服务器配置项，如下图所示：
+![lan_ip](img/lan_ip.png)
+![lan_dns](img/lan_dns.png)
+![lan_dhcp](img/lan_dhcp.png)
 
 > 建议 ***wan***、***lan*** 口都使用自定义的 *DNS*。
+
+#### 3.6 服务/插件配置
+**OpenWrt** 强大的插件功能让其可玩性到了新的高度，包括但不限于广告屏蔽、各种协议的网络代理等；介于某些原因，这一块请大家自己探索，并享受其中的乐趣！
 
 ## 宿主机网络修复
 
