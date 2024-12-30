@@ -1,9 +1,7 @@
 # OpenWRT in Docker
-
 本项目介绍如何在 **Docker** 中运行 **OpenWRT**，并将其作为主路由使用。
 
 ## 准备工作
-
 - 将光猫设置为 **桥接** 模式，具体可咨询当地运营商，路由器设置为 [*PPPoE*](https://en.wikipedia.org/wiki/Point-to-Point_Protocol_over_Ethernet) 模式（后面会改为 **AP** 模式）。
 - 一台运行 **Linux**（推荐 [Arch](https://archlinux.org)）操作系统的设备，*ARM/x86* 均可，已安装 **Docker**；最好能有两个千兆以上的物理网口（可以用 *USB* 网卡代替），假设名称分别为 ***openwrt-wan*** 和 ***openwrt-lan***，在当前网络中的 *IP* 分别为 `192.168.1.10`，`192.168.1.20`。
 - 在后续的步骤中，我们会将 ***openwrt-wan*** 连接光猫，作为 ***wan*** 口使用，提供 [*PPPoE*](https://en.wikipedia.org/wiki/Point-to-Point_Protocol_over_Ethernet) 拨号等服务；***openwrt-lan*** 连接路由器，作为 ***lan*** 口使用，提供 [*DHCP*](https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol) 等服务。
@@ -62,7 +60,7 @@ config interface 'lan'
 将路由器设置为 **AP** 模式
 
 #### 3.5 WAN/LAN 口配置调整
-在浏览器中输入 ***lan*** 口的 *IP* 进入 *Luci* 控制面板，用户名：`root`，密码：`password`。  
+在浏览器中输入 ***lan*** 口的 *IP* 进入 *Luci* 控制面板，用户名：`root`，密码：`password`（密码可能会因为镜像的不同而不同）。  
 在 *Web* 控制面板，将 ***wan*** 口协议设置为 *PPPoE*，并使用自定义的 *DNS*，如下图所示：
 ![wan_pppoe](img/wan_pppoe.png)
 ![wan_dns](img/wan_dns.png)
@@ -78,12 +76,19 @@ config interface 'lan'
 **OpenWrt** 强大的插件功能让其可玩性到了新的高度，包括但不限于广告屏蔽、各种协议的网络代理等；介于某些原因，这一块请大家自己探索，并享受其中的乐趣！
 
 ## 宿主机网络修复
-
 **OpenWrt** 容器运行后，**Linux** 宿主机与 **OpenWRT** 之间无法直接通信，导致宿主机无法访问互联网，局域网内其他设备也无法直接访问宿主机。这和 **Docker** 的 *macvlan* 网络驱动模式有关，这个模式通俗一点讲就是在一张物理网卡上模拟出一张虚拟网卡，有独立的 *MAC* 地址，可以分配独立的 *IP* 地址，看起来就像是局域网内一台独立的设备；此时 **Docker** 容器可以和局域网下的设备直接通信，反之亦然，很方便。不过，这种模式有一个问题：宿主机和容器是没办法直接网络通信的，也即最开始提到的问题。  
-
 幸运的是，网上有大佬给出了一些解决方案，我整理成了一个简单的 [*脚本*](bin/openwrt-lan.sh)，并作为 [*systemd*](https://wiki.archlinux.org/title/Systemd) 服务运行。 在启动该守护进程前，请根据实际情况修改 [*openwrt-lan.sh*](bin/openwrt-lan.sh) 和 [*openwrt-lan.service*](conf/openwrt-lan.service)。
 
-## 感谢
+## 支持我
+如果这个项目对你有所帮助，请给我一颗 ⭐️ 吧！
 
+## 感谢
 - [在 Docker 中运行 OpenWrt 旁路网关](https://mlapp.cn/376.html)
 - [macvlan 模式容器与宿主机通信](https://aoyouer.com/posts/macvlan-host/)
+
+## :sparkles: Star History :sparkles:
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=doublewinter0/openwrt-in-docker&type=Date&theme=dark" />
+  <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=doublewinter0/openwrt-in-docker&type=Date" />
+  <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=doublewinter0/openwrt-in-docker&type=Date" />
+</picture>
